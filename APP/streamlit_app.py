@@ -6,20 +6,17 @@ from model import model
 from utils import load_csv, load_hdf5, preprocess_ecg_data
 
 # Streamlit app
-st.title("ECG Prediction Tool")
-
+st.title('ECG Diagnose Prediction App (ECG)')
+st.header('Detection of silent heart attacks')
 st.markdown("""
-## Usage Instructions:
-This ECG prediction tool allows you to analyze ECG data using a pre-trained model. Follow these steps to use the tool:
-1. Select your ECG file using the "Choose ECG file" button. Supported formats include CSV, or HDF5.
-2. Choose the correct file type from the dropdown menu.
-3. If you're using an HDF5 file, you can optionally specify the dataset name within the file.
-4. Set the desired target length for your data. The tool will automatically trim or pad your ECG data to match this length.
+This app allows you to analyze ECG data using a pre-trained AI model. Follow these steps to use the tool:
+1. Select your ECG file using the "Choose ECG file" button. Supported formats include CSV and HDF5 for now.
+2. Choose the file type from the dropdown menu. (in case of a HDF5 file, you can specify the dataset name)
+3. Set the desired target length for your data. The tool will automatically trim or pad your ECG data to match this length.
 5. Click "Predict" to analyze the ECG data. The prediction result will be displayed below.
 
 **Note:** The model was trained on data from 3,750 patients, with each ECG sample having a shape of (5300, 12), representing 5300 data points across 12 ECG leads.
 """)
-
 # File upload
 uploaded_file = st.file_uploader("Choose an ECG file", type=["csv", "hdf5"])
 file_type = st.selectbox("Select File Type", ["csv", "hdf5"])
@@ -67,3 +64,7 @@ if st.button("Predict"):
         st.success(f"Prediction for future silent heart attack:  {prediction_percentage:.2f}%")
     else:
         st.error("No file uploaded")
+
+# footer
+st.markdown("""
+Created by Kristian Alikaj using PyTorch and Streamlit. You can find the source code on [GitHub repository](https://github.com/kris96tian/machine_learning_ecg) """ )
