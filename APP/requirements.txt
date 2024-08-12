@@ -1,12 +1,6 @@
-pip==24.2
-requests
-pathlib
-six
-pycryptodome
-tenacity
-mega.py==1.0.8
-streamlit==1.37.1
+streamlit==1.21.0
+mega-py==1.0.8
 torch==2.4.0
 numpy==1.23.0
-pandas==1.5.3
+pandas<2.0
 h5py==3.11.0
