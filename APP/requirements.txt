@@ -1,4 +1,4 @@
-mega
+mega.py
 torch
 h5py
 streamlit
