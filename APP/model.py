@@ -35,7 +35,7 @@ def load_model_from_dropbox(url):
         model = ECGCNN()
         model.load_state_dict(torch.load(buffer, map_location=torch.device('cpu')))
         
-        model.eval()  ´
+        model.eval()  
         return model
 
     except Exception as e:
