@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
-import requests
-from io import BytesIO
+from mega import Mega
+import os
 
 class ECGCNN(nn.Module):
     def __init__(self):
@@ -26,27 +26,29 @@ class ECGCNN(nn.Module):
         x = self.sigmoid(x)
         return x
 
-def load_model_from_dropbox(url):
-    # Download the model file from Dropbox
-    response = requests.get(url)
-    response.raise_for_status()  # Ensure the download was successful
+# load model from MEGA
+def load_model_from_mega(url):
+    try:     
+        mega = Mega()
+        m = mega.login()
+        file = m.download_url(url)
+        
+        model = ECGCNN()
+        checkpoint = torch.load(file, map_location=torch.device('cpu'))
+        model_dict = model.state_dict()
+        checkpoint = {k: v for k, v in checkpoint.items() if k in model_dict and v.size() == model_dict[k].size()}
+        model_dict.update(checkpoint)
+        model.load_state_dict(model_dict)
 
-    # Load the state_dict model from the downloaded bytes
-    buffer = BytesIO(response.content)
-    model = ECGCNN()
+        
+        return model
+    except Exception as e:
+      
+        return None
 
-    checkpoint = torch.load(buffer, map_location=torch.device('cpu'))
-    model_dict = model.state_dict()
 
-    # Update only matching keys between checkpoint and model
-    checkpoint = {k: v for k, v in checkpoint.items() if k in model_dict and v.size() == model_dict[k].size()}
-    model_dict.update(checkpoint)
-    model.load_state_dict(model_dict)
-
-    return model
-
-# Dropbox link with `dl=1` to force direct download
-dropbox_url = 'https://www.dropbox.com/scl/fi/f0nehqdr5i2salflap0gg/model.pth?rlkey=p38eox3ci5w8ky1abhc0uz2cx&st=nmcqw6cb&dl=1'
-
-model = load_model_from_dropbox(dropbox_url)
+# Load the model
+mega_url = 'https://mega.nz/file/eMQyUbTL#rN13DEjWCpqp0RUYoA2fVyl4xeaErlbkj8z3WGI7gUg'
+model = load_model_from_mega(mega_url)
 model.eval()
+    
