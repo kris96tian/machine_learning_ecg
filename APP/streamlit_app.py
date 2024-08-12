@@ -9,7 +9,7 @@ from utils import load_csv, load_hdf5, preprocess_ecg_data
 st.title('ECG Prediction App')
 st.header('Detection of silent heart attacks')
 
-
+# File upload
 uploaded_file = st.file_uploader("Choose an ECG file", type=["csv", "hdf5"])
 file_type = st.selectbox("Select File Type", ["csv", "hdf5"])
 dataset_name = st.text_input("Dataset Name (for HDF5)", value="ecg_dataset")
@@ -22,6 +22,7 @@ if st.button("Predict"):
         with open(temp_file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
+        # Load ECG data based on file type
         try:
             if file_type == 'csv':
                 ecg_data = load_csv(temp_file_path)
@@ -35,17 +36,23 @@ if st.button("Predict"):
             st.stop()
         finally:
             os.remove(temp_file_path)  # Clean up temporary file
+
+        # Preprocess ECG data
         try:
             ecg_data = preprocess_ecg_data(ecg_data, target_length)
         except ValueError as e:
             st.error(f"Error preprocessing data: {e}")
             st.stop()
 
+        # Convert data to tensor and make prediction
         ecg_data_tensor = torch.tensor(ecg_data, dtype=torch.float32).unsqueeze(0)  # Shape (1, 12, target_length)
         with torch.no_grad():
             output = model(ecg_data_tensor)
             prediction = torch.sigmoid(output).item()  # Get scalar prediction
+            prediction_percentage = prediction * 100
 
-        st.success(f"Prediction: {prediction}")
+
+        # Display prediction
+        st.success(f"Prediction for future silent heart attack:  {prediction_percentage:.2f}%")
     else:
         st.error("No file uploaded")
