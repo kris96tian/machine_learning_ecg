@@ -1,4 +1,9 @@
-mega.py
+pathlib
+six
+pycryptodome
+requests
+tenacity
+mega.py==1.0.8
 torch
 h5py
 streamlit
