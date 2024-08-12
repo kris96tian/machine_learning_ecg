@@ -1,6 +1,6 @@
 streamlit==1.21.0
 mega-py==1.0.8
 torch==2.4.0
-numpy==
+numpy
 pandas
 h5py
