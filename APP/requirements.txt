@@ -1,3 +1,5 @@
+torch
+h5py
 streamlit
 pandas
 numpy
