@@ -6,8 +6,8 @@ from model import model
 from utils import load_csv, load_hdf5, preprocess_ecg_data
 
 # Streamlit app
-st.title('ECG Diagnose Prediction App (ECG)')
-st.header('Detection of silent heart attacks')
+st.title('ECG Diagnose Prediction App (Silent Heart Attacks) ')
+
 st.markdown("""
 This app allows you to analyze ECG data using a pre-trained AI model. Follow these steps to use the tool:
 1. Select your ECG file using the "Choose ECG file" button. Supported formats include CSV and HDF5 for now.
