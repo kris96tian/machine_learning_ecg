@@ -4,7 +4,7 @@ six
 pycryptodome
 tenacity
 mega.py==1.0.8
-streamlit==1.21.0
+streamlit==1.37.1
 torch==2.4.0
 numpy==1.23.0
 pandas==1.5.3
