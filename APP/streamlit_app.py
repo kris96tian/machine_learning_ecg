@@ -6,8 +6,19 @@ from model import model
 from utils import load_csv, load_hdf5, preprocess_ecg_data
 
 # Streamlit app
-st.title('ECG Prediction App')
-st.header('Detection of silent heart attacks')
+st.title("ECG Prediction Tool")
+
+st.markdown("""
+## Usage Instructions:
+This ECG prediction tool allows you to analyze ECG data using a pre-trained model. Follow these steps to use the tool:
+1. Select your ECG file using the "Choose ECG file" button. Supported formats include CSV, or HDF5.
+2. Choose the correct file type from the dropdown menu.
+3. If you're using an HDF5 file, you can optionally specify the dataset name within the file.
+4. Set the desired target length for your data. The tool will automatically trim or pad your ECG data to match this length.
+5. Click "Predict" to analyze the ECG data. The prediction result will be displayed below.
+
+**Note:** The model was trained on data from 3,750 patients, with each ECG sample having a shape of (5300, 12), representing 5300 data points across 12 ECG leads.
+""")
 
 # File upload
 uploaded_file = st.file_uploader("Choose an ECG file", type=["csv", "hdf5"])
