@@ -1,7 +1,8 @@
 
 # app :
-https://mbxn5a4pvdzzope8mgwm3m.streamlit.app/
+https://ecgprediction.pythonanywhere.com/
 
 #
 #
-<img src="blob:chrome-untrusted://media-app/8e7b52c0-8f72-4a0f-bbd2-08f898115f04" alt="Screenshot 2024-08-12 13.16.24.png"/>![image](https://github.com/user-attachments/assets/db3e6bdb-81bb-4e3f-93bb-e8746f201758)
+
+<img src="blob:chrome-untrusted://media-app/0fcd2522-16ab-48aa-94d4-7c6cc7db9f01" alt="ecg_sshot.png"/>![image](https://github.com/user-attachments/assets/781aed22-405c-4bb2-90f2-2673ae795207)
