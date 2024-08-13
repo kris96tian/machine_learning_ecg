@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECG Diagnose Prediction App (Silent Heart Attacks)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1c1c1c;
+            color: #d4d4d4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #2c2c2c;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
+            max-width: 600px;
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        h1 {
+            color: #f4f4f4;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            text-align: center;
+        }
+
+        p, ol {
+            margin-bottom: 10px;
+        }
+
+        ol {
+            padding-left: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 5px;
+            color: #f4f4f4;
+        }
+
+        input, select, button {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #444;
+            border-radius: 4px;
+            background: #333;
+            color: #d4d4d4;
+        }
+
+        input:focus, select:focus, button:focus {
+            outline: none;
+            border-color: #5a9;
+            box-shadow: 0 0 5px #5a9;
+        }
+
+        button {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .error {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #888;
+        }
+
+        footer a {
+            color: #5a9;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ECG Diagnose Prediction App (Silent Heart Attacks)</h1>
+        
+        <p>This app allows you to analyze ECG data using a pre-trained AI model. Follow these steps to use the tool:</p>
+        <ol>
+            <li>Select your ECG file (Currently supported formats include CSV and HDF5).</li>
+            <li>Choose the file type from the dropdown menu.</li>
+            <li>Set the desired target length for your data. The tool will automatically adjust your ECG data to this length.</li>
+            <li>Click "Predict" to analyze the ECG data.</li>
+        </ol>
+        
+        <p><strong>Note:</strong> The model was trained on data from 3,750 patients, with each ECG sample having a shape of (5300, 12), representing 5300 data points across 12 ECG leads.</p>
+
+        <form id="predictionForm">
+            <label for="file">Choose an ECG file:</label>
+            <input type="file" id="file" name="file" accept=".csv,.hdf5" required>
+            
+            <label for="file_type">Select File Type:</label>
+            <select id="file_type" name="file_type" required>
+                <option value="csv">CSV</option>
+                <option value="hdf5">HDF5</option>
+            </select>
+            
+            <label for="dataset_name">Dataset Name (for HDF5):</label>
+            <input type="text" id="dataset_name" name="dataset_name" value="ecg_dataset">
+            
+            <label for="target_length">Target Length:</label>
+            <input type="number" id="target_length" name="target_length" value="5300" required>
+            
+            <button type="submit">Predict</button>
+        </form>
+        
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <footer>
+        <p>Created by Kristian Alikaj using Flask and PyTorch. You can find the source code on <a href="https://github.com/kris96tian/machine_learning_ecg" target="_blank">GitHub repository</a></p>
+    </footer>
+
+    <script>
+        document.getElementById('predictionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            fetch('/predict', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                if (data.error) {
+                    resultDiv.textContent = 'Error: ' + data.error;
+                    resultDiv.className = 'result error';
+                } else {
+                    resultDiv.textContent = 'Prediction for future silent heart attack: ' + data.prediction;
+                    resultDiv.className = 'result success';
+                }
+                resultDiv.style.display = 'block';
+            })
+            .catch(error => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.textContent = 'An error occurred while processing your request.';
+                resultDiv.className = 'result error';
+                resultDiv.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
