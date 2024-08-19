@@ -55,7 +55,7 @@
         }
         .btn {
             display: inline-block;
-            background-color: #FF6F61;
+            background-color: #4b155b;
             color: white;
             padding: 10px 20px;
             text-align: center;
@@ -64,14 +64,27 @@
             font-size: 1em;
             border: none;
             width: 100%;
+            margin-top: 10px;
         }
         .btn:hover {
-            background-color: #FF8A75;
+            background-color: #4f99c4;
+        }
+        .btn-sample {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 0.8em;
+            padding: 8px 12px;
+            width: auto;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .btn-sample:hover {
+            background-color: #66BB6A;
         }
         .result {
             margin-top: 20px;
             padding: 15px;
-            background-color: #3E4C69;
+            background-color: #680533;
             color: white;
             border-radius: 5px;
             font-size: 1.2em;
@@ -117,6 +130,9 @@
                 </select>
             </div>
             <div class="input-group">
+                <a href="/static/sampledata.csv" class="btn-sample" download>Get example CSV to try</a>
+            </div>
+            <div class="input-group">
                 <label for="dataset_name">Dataset name (only for HDF5 files)</label>
                 <input type="text" id="dataset_name" name="dataset_name" placeholder="Leave blank for CSV">
             </div>
@@ -124,13 +140,15 @@
                 <label for="target_length">Target length of ECG data</label>
                 <input type="number" id="target_length" name="target_length" min="100" max="10000" value="5300">
             </div>
-            <button type="submit" class="btn">Predict</button>
+            <button type="submit" class="btn">PREDICT</button>
         </form>
     </div>
 
     <div id="result" class="result" style="display: none;"></div>
     <div id="error" class="error" style="display: none;"></div>
-<p><strong>Note:</strong> The model was trained on data from 3,750 patients, with each ECG sample having a shape of (5300, 12), representing 5300 data points across 12 ECG leads.</p>
+    
+    <p><strong>Note:</strong> The model was trained on data from 3,750 patients, with each ECG sample having a shape of (5300, 12), representing 5300 data points across 12 ECG leads.</p>
+
     <footer>
         <p>Created by Kristian Alikaj using Flask and PyTorch. You can find the source code here: <a href="https://github.com/kris96tian/machine_learning_ecg">GitHub repository</a></p>
     </footer>
