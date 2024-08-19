@@ -1,4 +1,8 @@
 # Diagnosing ‘silent’ heart attacks using ECG waveforms 
+#
+## Wb-App:
+<img src="blob:chrome-untrusted://media-app/2c0fb3f1-9385-48db-910b-052b0d92a61d" alt=""/>![image](https://github.com/user-attachments/assets/40c823d1-85cc-49a4-ad5e-b759f430090e)
+#
 
 ## Abstract
 This project focuses on the early detection
