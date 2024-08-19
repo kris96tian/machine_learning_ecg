@@ -1,4 +1,3 @@
-# app.py
 from flask import Flask, render_template, request, jsonify
 import torch
 import numpy as np
@@ -26,11 +25,9 @@ def predict():
         return jsonify({'error': 'No file selected'}), 400
 
     try:
-        # Save the uploaded file temporarily
         temp_file_path = os.path.join('/tmp', file.filename)
         file.save(temp_file_path)
 
-        # Load ECG data based on file type
         if file_type == 'csv':
             ecg_data = load_csv(temp_file_path)
         elif file_type == 'hdf5':
@@ -38,10 +35,8 @@ def predict():
         else:
             return jsonify({'error': 'Unsupported file type'}), 400
 
-        # Preprocess ECG data
         ecg_data = preprocess_ecg_data(ecg_data, target_length)
 
-        # Convert data to tensor and make prediction
         ecg_data_tensor = torch.tensor(ecg_data, dtype=torch.float32).unsqueeze(0)
         with torch.no_grad():
             output = model(ecg_data_tensor)
@@ -54,7 +49,6 @@ def predict():
         return jsonify({'error': str(e)}), 500
 
     finally:
-        # Clean up temporary file
         if os.path.exists(temp_file_path):
             os.remove(temp_file_path)
 
