@@ -1,0 +1,5 @@
+streamlit 
+torch 
+numpy 
+pandas 
+h5py
