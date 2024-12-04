@@ -94,49 +94,6 @@ def load_model():
         st.error(f"Failed to load model: {str(e)}")
         return None
 
-# In the main app code, add better error handling:
-if uploaded_file is not None:
-    try:
-        # Load and preprocess data
-        if file_type == "CSV":
-            ecg_data = load_csv(uploaded_file)
-        else:  # HDF5
-            if not dataset_name:
-                st.error("Please provide a dataset name for the HDF5 file")
-                return
-            ecg_data = load_hdf5(uploaded_file, dataset_name)
-
-        ecg_data = preprocess_ecg_data(ecg_data, target_length)
-        
-        # Load model with progress indicator
-        with st.spinner('Loading model...'):
-            model = load_model()
-            
-        if model is not None:
-            with torch.no_grad():  # Ensure inference mode
-                ecg_data_tensor = torch.tensor(ecg_data, dtype=torch.float32).unsqueeze(0)
-                output = model(ecg_data_tensor)
-                prediction = torch.sigmoid(output).item()
-                prediction_percentage = prediction * 100
-                
-                # Display prediction with confidence indicator
-                col1, col2 = st.columns(2)
-                with col1:
-                    st.metric("Heart Attack Risk", f"{prediction_percentage:.1f}%")
-                with col2:
-                    confidence = "High" if prediction_percentage > 90 or prediction_percentage < 10 else "Medium"
-                    st.info(f"Prediction Confidence: {confidence}")
-
-                # Add visualization
-                st.subheader("ECG Visualization")
-                chart_data = pd.DataFrame(ecg_data.T)
-                st.line_chart(chart_data)
-        else:
-            st.error("Could not load the model. Please check if the model file is present and valid.")
-
-    except Exception as e:
-        st.error(f"Error processing file: {str(e)}")
-        st.exception(e)  # This will show the full traceback in development
 
 # Streamlit UI
 def main():
