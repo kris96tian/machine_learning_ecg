@@ -57,16 +57,86 @@ def preprocess_ecg_data(ecg_data, target_length=5300):
 def load_model():
     model = ECGCNN()
     try:
-        checkpoint = torch.load('model.ph', map_location=torch.device('cpu'))
-        checkpoint_state_dict = checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint
+        if not os.path.exists('model.ph'):
+            st.error("Model file not found. Please ensure 'model.ph' is in the same directory as this script.")
+            return None
+            
+        # Load with weights_only=True for security
+        checkpoint = torch.load(
+            'model.ph', 
+            map_location=torch.device('cpu'),
+            weights_only=True  # More secure loading
+        )
+        
+        # Handle different checkpoint formats
+        if isinstance(checkpoint, dict):
+            state_dict = checkpoint.get('state_dict', checkpoint)
+        else:
+            state_dict = checkpoint
+            
+        # Filter and load state dict
         model_state_dict = model.state_dict()
-        filtered_state_dict = {k: v for k, v in checkpoint_state_dict.items() 
-                             if k in model_state_dict and model_state_dict[k].shape == v.shape}
+        filtered_state_dict = {
+            k: v for k, v in state_dict.items() 
+            if k in model_state_dict and model_state_dict[k].shape == v.shape
+        }
+        
+        # Check if we have any valid weights
+        if not filtered_state_dict:
+            st.error("No valid weights found in model file.")
+            return None
+            
         model.load_state_dict(filtered_state_dict, strict=False)
+        model.eval()  # Set to evaluation mode
         return model
+        
     except Exception as e:
         st.error(f"Failed to load model: {str(e)}")
         return None
+
+# In the main app code, add better error handling:
+if uploaded_file is not None:
+    try:
+        # Load and preprocess data
+        if file_type == "CSV":
+            ecg_data = load_csv(uploaded_file)
+        else:  # HDF5
+            if not dataset_name:
+                st.error("Please provide a dataset name for the HDF5 file")
+                return
+            ecg_data = load_hdf5(uploaded_file, dataset_name)
+
+        ecg_data = preprocess_ecg_data(ecg_data, target_length)
+        
+        # Load model with progress indicator
+        with st.spinner('Loading model...'):
+            model = load_model()
+            
+        if model is not None:
+            with torch.no_grad():  # Ensure inference mode
+                ecg_data_tensor = torch.tensor(ecg_data, dtype=torch.float32).unsqueeze(0)
+                output = model(ecg_data_tensor)
+                prediction = torch.sigmoid(output).item()
+                prediction_percentage = prediction * 100
+                
+                # Display prediction with confidence indicator
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.metric("Heart Attack Risk", f"{prediction_percentage:.1f}%")
+                with col2:
+                    confidence = "High" if prediction_percentage > 90 or prediction_percentage < 10 else "Medium"
+                    st.info(f"Prediction Confidence: {confidence}")
+
+                # Add visualization
+                st.subheader("ECG Visualization")
+                chart_data = pd.DataFrame(ecg_data.T)
+                st.line_chart(chart_data)
+        else:
+            st.error("Could not load the model. Please check if the model file is present and valid.")
+
+    except Exception as e:
+        st.error(f"Error processing file: {str(e)}")
+        st.exception(e)  # This will show the full traceback in development
 
 # Streamlit UI
 def main():
