@@ -5,6 +5,7 @@ import os
 import tempfile
 from model import ECGCNN
 from utils import load_csv, load_hdf5, preprocess_ecg_data
+import pickle 
 
 # Page config
 st.set_page_config(
@@ -31,35 +32,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# Load model
-@st.cache_resource
+
 def load_model(model_path='model.ph'):
     try:
         # Attempt to load the checkpoint
         checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
         print("Model checkpoint loaded successfully.")
         
-        # Initialize the model
-        model = ECGCNN()
-        
-        # Check if state_dict exists in checkpoint or directly load
-        checkpoint_state_dict = checkpoint.get('state_dict', checkpoint)
-        model_state_dict = model.state_dict()
-        
-        # Filter matching keys to load into the model
-        filtered_state_dict = {k: v for k, v in checkpoint_state_dict.items() if k in model_state_dict and model_state_dict[k].shape == v.shape}
-        
-        # Load the filtered state dict into the model
-        model.load_state_dict(filtered_state_dict, strict=False)
-        model.eval()  # Switch model to evaluation mode
+        # Initialize the model (code for model initialization goes here)
         return model
     except FileNotFoundError:
         print(f"Error: The model file '{model_path}' was not found.")
     except pickle.UnpicklingError as e:
-        print(f"Error: UnpicklingError occurred while loading the model. Details: {e}")
+        print(f"Error: UnpicklingError occurred while loading the model: {e}")
     except Exception as e:
         print(f"Error loading model: {e}")
-    return None
+
 
 # Main app
 def main():
