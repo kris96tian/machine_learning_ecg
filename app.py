@@ -36,7 +36,8 @@ st.markdown("""
 def load_model(model_path='model.ph'):
     try:
         # Attempt to load the checkpoint
-        checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
+        checkpoint = torch.load(model_path, map_location=torch.device('cpu'), weights_only=True)
+
         print("Model checkpoint loaded successfully.")
         
         # Initialize the model (code for model initialization goes here)
