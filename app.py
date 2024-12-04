@@ -1,4 +1,3 @@
-# app.py
 import streamlit as st
 import torch
 import numpy as np
@@ -35,7 +34,11 @@ st.markdown("""
 # Load model
 @st.cache_resource
 def load_model():
-    checkpoint = torch.load('model.ph', map_location=torch.device('cpu'))
+    model_path = 'model.ph'
+    if not os.path.exists(model_path):
+        st.error("Model file is missing!")
+        return None
+    checkpoint = torch.load(model_path, map_location=torch.device('cpu'))
     model = ECGCNN()
     checkpoint_state_dict = checkpoint['state_dict'] if 'state_dict' in checkpoint else checkpoint
     model_state_dict = model.state_dict()
@@ -78,6 +81,9 @@ def main():
                 if file_type == 'csv':
                     ecg_data = load_csv(temp_file_path)
                 elif file_type == 'hdf5':
+                    if not dataset_name:
+                        st.error("Please provide a dataset name for HDF5 files.")
+                        return
                     ecg_data = load_hdf5(temp_file_path, dataset_name)
 
                 ecg_data = preprocess_ecg_data(ecg_data, target_length)
@@ -89,13 +95,19 @@ def main():
                     prediction = torch.sigmoid(output).item()
                     prediction_percentage = prediction * 100
 
-                st.success(f"Prediction: {prediction_percentage:.2f}%")
+                # Display results
+                if prediction > 0.5:
+                    st.success(f"Prediction: Heart Attack detected with {prediction_percentage:.2f}% certainty.")
+                else:
+                    st.success(f"Prediction: Normal ECG with {prediction_percentage:.2f}% certainty.")
 
                 # Cleanup
                 os.unlink(temp_file_path)
 
+            except FileNotFoundError:
+                st.error("The file was not found. Please check the file path.")
             except Exception as e:
-                st.error(f"Error: {str(e)}")
+                st.error(f"An unexpected error occurred: {e}")
         else:
             st.error("Please upload a file")
 
