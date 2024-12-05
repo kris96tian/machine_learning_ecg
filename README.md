@@ -1,8 +1,8 @@
 # Diagnosing ‘silent’ heart attacks using ECG waveforms 
 #
-## Wb-App: https://ecgprediction.pythonanywhere.com/
-<img src="blob:chrome-untrusted://media-app/cc8b1961-1f0e-4498-86d7-13378707bb72" alt=""/>![image](https://github.com/user-attachments/assets/57153e5d-4732-44cc-992b-f2c32a373c0e)
+## Wb-App: [https://ecgprediction.pythonanywhere.com/](https://huggingface.co/spaces/kral2796/heart-attack-prediction)
 
+![app-example](https://github.com/user-attachments/assets/029d821b-66f8-4876-9b2d-242e920e02c4)
 
 #
 
